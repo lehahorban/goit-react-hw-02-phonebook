@@ -41,6 +41,11 @@ class App extends Component {
 
   render() {
     const { name, number, filter } = this.state;
+    const filterContact = this.state.contacts.filter(contact =>
+      contact.name.toLowerCase().includes(this.state.filter.toLowerCase())
+    );
+    console.log(filterContact);
+
     return (
       <div>
         <p>Phonebook</p>
@@ -76,7 +81,7 @@ class App extends Component {
         </form>
         <ul>
           Contact
-          {this.state.contacts.map(item => (
+          {filterContact.map(item => (
             <li key={shortid.generate()}>
               {item.name}: {item.number}
               <button onClick={() => this.deleteUser(item)}>Delete</button>
