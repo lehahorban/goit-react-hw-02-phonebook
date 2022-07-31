@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-// import ContactForm from './ContactForm/ContactForm';
+import ContactForm from './ContactForm/ContactForm';
+import ContactList from './ContactList/ContactList';
+import Filter from './Filter/Filter';
 import shortid from 'shortid';
+import style from '../components/Style.module.css';
 
 class App extends Component {
   state = {
@@ -11,26 +14,37 @@ class App extends Component {
       { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
     ],
     filter: '',
-    name: '',
-    number: '',
   };
 
   onSubmit = event => {
     event.preventDefault();
+    const form = event.currentTarget;
+    const id = shortid.generate();
+    // console.log(form);
+    const addContact = this.state.contacts.find(
+      contact => contact.name === this.state.name
+    );
+    // console.log(addContact);
+    if (addContact) {
+      alert(`${addContact.name} alredy is contact`);
+      this.setState({ name: '', number: '' });
+    } else {
+      this.setState({
+        contacts: [
+          ...this.state.contacts,
+          { id: id, name: this.state.name, number: this.state.number },
+        ],
+        name: '',
+        number: '',
+      });
+    }
 
-    this.setState({
-      contacts: [
-        ...this.state.contacts,
-        { name: this.state.name, number: this.state.number },
-      ],
-      name: '',
-      number: '',
-    });
+    form.reset();
   };
   onChange = event => {
-    // const { name, value } = event.currentTarget;
-    // this.setState({ [name]: value });
-    this.setState({ [event.target.name]: event.target.value });
+    const { name, value } = event.currentTarget;
+    this.setState({ [name]: value });
+    // this.setState({ [event.target.name]: event.target.value });
   };
 
   deleteUser = user => {
@@ -44,50 +58,24 @@ class App extends Component {
     const filterContact = this.state.contacts.filter(contact =>
       contact.name.toLowerCase().includes(this.state.filter.toLowerCase())
     );
-    console.log(filterContact);
+    // console.log(filterContact);
 
     return (
-      <div>
+      <div className={style.app}>
         <p>Phonebook</p>
-        <form onSubmit={this.onSubmit}>
-          <label>Name</label>
-          <input
-            type="text"
-            name="name"
-            pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-            title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-            required
-            onChange={this.onChange}
-            value={name}
-          />
-          <label>Number</label>
-          <input
-            type="tel"
-            name="number"
-            pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-            title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-            required
-            onChange={this.onChange}
-            value={number}
-          />
-          <label>Find contact by name</label>
-          <input
-            type="text"
-            name="filter"
-            value={filter}
-            onChange={this.onChange}
-          />
-          <button type="submit">Add contact</button>
-        </form>
-        <ul>
-          Contact
-          {filterContact.map(item => (
-            <li key={shortid.generate()}>
-              {item.name}: {item.number}
-              <button onClick={() => this.deleteUser(item)}>Delete</button>
-            </li>
-          ))}
-        </ul>
+        <ContactForm
+          name={name}
+          number={number}
+          onChange={this.onChange}
+          onSubmit={this.onSubmit}
+        />
+
+        <Filter filter={filter} onChange={this.onChange} />
+
+        <ContactList
+          filterContact={filterContact}
+          deleteUser={this.deleteUser}
+        />
       </div>
     );
   }
