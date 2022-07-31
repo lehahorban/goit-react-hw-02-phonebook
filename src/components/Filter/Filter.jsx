@@ -16,8 +16,8 @@ class Filter extends Component {
 }
 
 Filter.propTypes = {
-  filterContact: PropTypes.array,
-  deleteUser: PropTypes.func,
+  filter: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
 };
 
 export default Filter;

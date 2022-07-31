@@ -21,8 +21,8 @@ class ContactList extends Component {
 }
 
 ContactList.propTypes = {
-  filterContact: PropTypes.array,
-  deleteUser: PropTypes.func,
+  filterContact: PropTypes.array.isRequired,
+  deleteUser: PropTypes.func.isRequired,
 };
 
 export default ContactList;
