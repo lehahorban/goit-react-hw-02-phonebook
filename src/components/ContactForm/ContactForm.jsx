@@ -10,7 +10,8 @@ class ContactForm extends Component {
 
   onSubmit = event => {
     event.preventDefault();
-    this.props.onAddContact({ ...this.state });
+    const { onAddContact } = this.props;
+    onAddContact({ ...this.state });
     this.setState({ name: '', number: '' });
   };
 
