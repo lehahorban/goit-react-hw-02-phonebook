@@ -16,35 +16,27 @@ class App extends Component {
     filter: '',
   };
 
-  onSubmit = event => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const id = shortid.generate();
-    // console.log(form);
-    const addContact = this.state.contacts.find(
-      contact => contact.name === this.state.name
+  addContacts = getContact => {
+    const { contacts } = this.state;
+    const { name, number } = getContact;
+    const contact = contacts.find(
+      contact => contact.name.toLowerCase() === name.toLowerCase()
     );
-    // console.log(addContact);
-    if (addContact) {
-      alert(`${addContact.name} alredy is contact`);
-      this.setState({ name: '', number: '' });
-    } else {
-      this.setState({
-        contacts: [
-          ...this.state.contacts,
-          { id: id, name: this.state.name, number: this.state.number },
-        ],
-        name: '',
-        number: '',
-      });
+    if (contact) {
+      alert(`Contact ${name} already exists`);
+      return;
     }
-
-    form.reset();
+    return this.setState({
+      contacts: [
+        ...contacts,
+        { name: name, number: number, id: shortid.generate() },
+      ],
+    });
   };
-  onChange = event => {
+
+  filterContacts = event => {
     const { name, value } = event.currentTarget;
     this.setState({ [name]: value });
-    // this.setState({ [event.target.name]: event.target.value });
   };
 
   deleteUser = user => {
@@ -54,24 +46,18 @@ class App extends Component {
   };
 
   render() {
-    const { name, number, filter } = this.state;
+    const { filter } = this.state;
 
     const filterContact = this.state.contacts.filter(contact =>
       contact.name.toLowerCase().includes(this.state.filter.toLowerCase())
     );
-    // console.log(filterContact);
 
     return (
       <div className={style.app}>
         <p>Phonebook</p>
-        <ContactForm
-          name={name}
-          number={number}
-          onChange={this.onChange}
-          onSubmit={this.onSubmit}
-        />
+        <ContactForm onAddContact={this.addContacts} />
 
-        <Filter filter={filter} onChange={this.onChange} />
+        <Filter filter={filter} onChange={this.filterContacts} />
 
         <ContactList
           filterContact={filterContact}
